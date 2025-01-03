@@ -41,12 +41,13 @@ const clearLayer = (layerNumber: number) => {
       :center="[-6.81789079877179, 107.1339085287504]"
       :use-global-leaflet="false"
       @click="onClickMap"
-      :max-zoom="18"
+      :max-zoom="24"
     >
       <LTileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         layer-type="base"
         name="OpenStreetMap"
+        :max-zoom="30"
       ></LTileLayer>
       <LPolygon
         v-for="layer in myLayerMap"
