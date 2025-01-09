@@ -109,7 +109,14 @@ const onDragEnd = (event: L.DragEndEvent) => {
           draggable
           @dragStart="onDragStart"
           @dragend="onDragEnd"
-        ></LMarker>
+        >
+          <LIcon
+            :icon-size="[30, 30]"
+            :shadow-size="[0, 0]"
+            icon-url="/cat-marker.png"
+          >
+          </LIcon>
+        </LMarker>
       </LPolygon>
     </LMap>
     <div class="actionButton">
