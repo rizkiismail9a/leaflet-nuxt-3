@@ -1,10 +1,14 @@
 <script setup lang="ts">
 type LayerMapItem = L.LatLngExpression[][];
 
-const zoom = ref<number>(15);
-const layerAmount = ref<number>(1);
+const { $leaflet } = useNuxtApp();
 
+const layerAmount = ref<number>(1);
 const myLayerMap = reactive<LayerMapItem>([]);
+const oldPointPosition = ref();
+const polygonKey = ref<number>(0);
+
+// const markers = reactive<L.Marker[][]>([]);
 
 const onClickMap = (e: L.LeafletMouseEvent) => {
   const newCoordinates: L.LatLngExpression = [e.latlng.lat, e.latlng.lng];
@@ -30,6 +34,47 @@ const clearLayer = (layerNumber: number) => {
   myLayerMap[layerNumber - 1] = [];
   myLayerMap.splice(layerNumber - 1, 1);
 };
+
+const onDragStart = (e: L.DragEndEvent) => {
+  const oldLatLng = e.target.getLatLng();
+
+  oldPointPosition.value = [oldLatLng.lat, oldLatLng.lng];
+  console.log("titik lama", oldPointPosition.value);
+};
+
+const onDragEnd = (event: L.DragEndEvent) => {
+  // dragTarget.value = event.target._latlng;
+  const marker = event.target;
+  const newMarker = marker.getLatLng();
+
+  // Cari layer dan titik yang sesuai
+  // for (let i = 0; i < myLayerMap.length; i++) {
+  //   for (let j = 0; j < myLayerMap[i].length; j++) {
+  //     console.log("old point", oldPointPosition.value[0]);
+  //     console.log(myLayerMap[i][j]);
+  //     if (oldPointPosition.value[0] === (myLayerMap[i][j] as number[])[0]) {
+  //       (myLayerMap[i][j] as number[])[0] = newMarker.lat;
+  //     }
+  //     if (oldPointPosition.value[1] === (myLayerMap[i][j] as number[])[1]) {
+  //       (myLayerMap[i][j] as number[])[1] = newMarker.lng;
+  //     }
+  //   }
+  // }
+
+  for (let i = 0; i < myLayerMap.length; i++) {
+    const pointIndex = myLayerMap[i].findIndex(
+      (point) =>
+        (point as number[])[0] === oldPointPosition.value[0] &&
+        (point as number[])[1] === oldPointPosition.value[1]
+    );
+
+    if (pointIndex !== -1) {
+      myLayerMap[i][pointIndex] = [newMarker.lat, newMarker.lng];
+      break;
+    }
+  }
+  polygonKey.value++;
+};
 </script>
 
 <template>
@@ -37,26 +82,35 @@ const clearLayer = (layerNumber: number) => {
     <LMap
       style="height: 100vh; width: 520px; cursor: pointer"
       ref="map"
-      v-model:zoom="zoom"
+      :zoom="15"
       :center="[-6.81789079877179, 107.1339085287504]"
       :use-global-leaflet="false"
       @click="onClickMap"
-      :max-zoom="24"
+      :max-zoom="22"
     >
       <LTileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         layer-type="base"
         name="OpenStreetMap"
-        :max-zoom="30"
+        :max-zoom="25"
       ></LTileLayer>
       <LPolygon
+        :key="polygonKey"
         v-for="layer in myLayerMap"
         :lat-lngs="layer"
         color="#41b782"
         :fill="true"
         :fillOpacity="0.3"
         fillColor="#41b782"
-      ></LPolygon>
+      >
+        <LMarker
+          v-for="l in layer"
+          :lat-lng="l"
+          draggable
+          @dragStart="onDragStart"
+          @dragend="onDragEnd"
+        ></LMarker>
+      </LPolygon>
     </LMap>
     <div class="actionButton">
       <p>Anda ada di layer ke-{{ layerAmount }}</p>
