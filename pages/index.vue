@@ -7,19 +7,20 @@ const layerAmount = ref<number>(1);
 const myLayerMap = reactive<LayerMapItem>([]);
 const oldPointPosition = ref();
 const polygonKey = ref<number>(0);
+const activeLayer = ref<number>(0);
 
 // const markers = reactive<L.Marker[][]>([]);
 
 const onClickMap = (e: L.LeafletMouseEvent) => {
   const newCoordinates: L.LatLngExpression = [e.latlng.lat, e.latlng.lng];
 
-  if (!myLayerMap[layerAmount.value - 1]) {
-    myLayerMap[layerAmount.value - 1] = [];
+  if (!myLayerMap[activeLayer.value]) {
+    myLayerMap[activeLayer.value] = [];
   }
 
   // referensi harus diperbaharui setiap kali ada perubahan. Jadi, harus di-reassign, gak bisa push atau splice
-  myLayerMap[layerAmount.value - 1] = [
-    ...myLayerMap[layerAmount.value - 1],
+  myLayerMap[activeLayer.value] = [
+    ...myLayerMap[activeLayer.value],
     newCoordinates,
   ];
 };
@@ -33,6 +34,10 @@ const addLayer = () => {
 const clearLayer = (layerNumber: number) => {
   myLayerMap[layerNumber - 1] = [];
   myLayerMap.splice(layerNumber - 1, 1);
+};
+
+const selectLayer = (layerNumber: number) => {
+  activeLayer.value = layerNumber;
 };
 
 const onDragStart = (e: L.DragEndEvent) => {
@@ -80,13 +85,13 @@ const onDragEnd = (event: L.DragEndEvent) => {
 <template>
   <div class="myMap">
     <LMap
-      style="height: 100vh; width: 520px; cursor: pointer"
+      style="height: 100vh; width: 100%; cursor: pointer"
       ref="map"
       :zoom="15"
       :center="[-6.81789079877179, 107.1339085287504]"
-      :use-global-leaflet="false"
       @click="onClickMap"
       :max-zoom="22"
+      :options="{ attributionControl: false }"
     >
       <LTileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -94,6 +99,9 @@ const onDragEnd = (event: L.DragEndEvent) => {
         name="OpenStreetMap"
         :max-zoom="25"
       ></LTileLayer>
+
+      <LControlAttribution position="topright" prefix="LindungiHutan" />
+
       <LPolygon
         :key="polygonKey"
         v-for="layer in myLayerMap"
@@ -118,29 +126,69 @@ const onDragEnd = (event: L.DragEndEvent) => {
           </LIcon>
         </LMarker>
       </LPolygon>
+
+      <LControl
+        class="layer-menu leaflet-control leaflet-demo-control"
+        position="topright"
+      >
+        <div class="layer-wrapper">
+          <button
+            v-for="(layer, index) in layerAmount"
+            @click.stop="selectLayer(index)"
+          >
+            Pilih Layer {{ layer }}
+          </button>
+        </div>
+      </LControl>
+
+      <LControl class="footer-menu leaflet-demo-control" position="bottomleft">
+        <div class="actionButton">
+          <button @click.stop="addLayer">Tambah Layer</button>
+        </div>
+      </LControl>
     </LMap>
-    <div class="actionButton">
-      <p>Anda ada di layer ke-{{ layerAmount }}</p>
-      <button @click="addLayer">Tambah Layer</button>
-      <button v-for="layer in myLayerMap.length" @click="clearLayer(layer)">
-        Bersihkan Layer {{ layer }}
-      </button>
-    </div>
   </div>
 </template>
 
 <style scoped>
 .myMap {
   width: 100%;
+  max-width: 520px;
+  margin: auto;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 20px;
 }
 
+.footer-menu {
+  width: 500px; /* gak bisa dinamis, paling kasih breakpoint */
+  height: 200px;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.layer-menu {
+  width: 100px;
+  background-color: white;
+}
+
+.layer-wrapper {
+  background-color: white;
+  padding: 12px;
+  width: fit-content;
+}
+
 .actionButton {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
   gap: 12px;
+  background-color: white;
+  padding: 8px;
+  /* position: absolute; */
+  /* z-index: 100; */
 }
 </style>
