@@ -28,13 +28,23 @@ const onClickMap = (e: L.LeafletMouseEvent) => {
 const addLayer = () => {
   if (myLayerMap[layerAmount.value - 1].length) {
     layerAmount.value++;
+    activeLayer.value++;
   }
 };
 
-const clearLayer = (layerNumber: number) => {
-  myLayerMap[layerNumber - 1] = [];
-  myLayerMap.splice(layerNumber - 1, 1);
+const undo = () => {
+  const currentLayerLength = myLayerMap[activeLayer.value].length;
+
+  if (!currentLayerLength) return;
+
+  myLayerMap[activeLayer.value].pop();
+  polygonKey.value++;
 };
+
+// const clearLayer = (layerNumber: number) => {
+//   myLayerMap[layerNumber - 1] = [];
+//   myLayerMap.splice(layerNumber - 1, 1);
+// };
 
 const selectLayer = (layerNumber: number) => {
   activeLayer.value = layerNumber;
@@ -87,17 +97,18 @@ const onDragEnd = (event: L.DragEndEvent) => {
     <LMap
       style="height: 100vh; width: 100%; cursor: pointer"
       ref="map"
-      :zoom="15"
+      :zoom="18"
       :center="[-6.81789079877179, 107.1339085287504]"
       @click="onClickMap"
-      :max-zoom="22"
-      :options="{ attributionControl: false }"
+      :max-zoom="20"
+      :options="{ attributionControl: false, zoomSnap: 0.5 }"
     >
       <LTileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         layer-type="base"
         name="OpenStreetMap"
-        :max-zoom="25"
+        :maxNativeZoom="19"
+        :maxZoom="25"
       ></LTileLayer>
 
       <LControlAttribution position="topright" prefix="LindungiHutan" />
@@ -132,6 +143,7 @@ const onDragEnd = (event: L.DragEndEvent) => {
         position="topright"
       >
         <div class="layer-wrapper">
+          <button @click="undo">undo</button>
           <button
             v-for="(layer, index) in layerAmount"
             @click.stop="selectLayer(index)"
@@ -143,7 +155,9 @@ const onDragEnd = (event: L.DragEndEvent) => {
 
       <LControl class="footer-menu leaflet-demo-control" position="bottomleft">
         <div class="actionButton">
-          <button @click.stop="addLayer">Tambah Layer</button>
+          <button @click.stop="addLayer" class="button-add-layer">
+            Tambah Layer
+          </button>
         </div>
       </LControl>
     </LMap>
@@ -164,7 +178,7 @@ const onDragEnd = (event: L.DragEndEvent) => {
 
 .footer-menu {
   width: 500px; /* gak bisa dinamis, paling kasih breakpoint */
-  height: 200px;
+  /* height: 200px; */
   border-radius: 8px;
   padding: 16px;
 }
@@ -178,17 +192,22 @@ const onDragEnd = (event: L.DragEndEvent) => {
   background-color: white;
   padding: 12px;
   width: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .actionButton {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
+  height: fit-content;
   gap: 12px;
   background-color: white;
   padding: 8px;
-  /* position: absolute; */
-  /* z-index: 100; */
+}
+
+.button-add-layer {
+  height: 50px;
 }
 </style>
