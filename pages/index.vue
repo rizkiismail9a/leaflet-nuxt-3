@@ -176,6 +176,12 @@ const onDragEnd = (event: L.DragEndEvent) => {
   gap: 20px;
 }
 
+/* Untuk menghapus garis-garis antar tile */
+::v-deep .leaflet-container img.leaflet-tile {
+  /* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
+  mix-blend-mode: normal;
+}
+
 .footer-menu {
   width: 500px; /* gak bisa dinamis, paling kasih breakpoint */
   /* height: 200px; */
