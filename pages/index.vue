@@ -95,7 +95,7 @@ const onDragEnd = (event: L.DragEndEvent) => {
 <template>
   <div class="myMap">
     <LMap
-      style="height: 100vh; width: 100%; cursor: pointer"
+      class="LHMap"
       ref="map"
       :zoom="18"
       :center="[-6.81789079877179, 107.1339085287504]"
@@ -153,14 +153,14 @@ const onDragEnd = (event: L.DragEndEvent) => {
         </div>
       </LControl>
 
-      <LControl class="footer-menu leaflet-demo-control" position="bottomleft">
-        <div class="actionButton">
-          <button @click.stop="addLayer" class="button-add-layer">
-            Tambah Layer
-          </button>
-        </div>
-      </LControl>
+      <!-- <LControl class="footer-menu leaflet-demo-control" position="bottomleft">
+      </LControl> -->
     </LMap>
+    <div class="actionButton">
+      <button @click.stop="addLayer" class="button-add-layer">
+        Tambah Layer
+      </button>
+    </div>
   </div>
 </template>
 
@@ -173,7 +173,14 @@ const onDragEnd = (event: L.DragEndEvent) => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 0;
+  background-color: gray;
+}
+
+.LHMap {
+  height: 90vh !important;
+  width: 100%;
+  cursor: pointer;
 }
 
 /* Untuk menghapus garis-garis antar tile */
@@ -207,13 +214,14 @@ const onDragEnd = (event: L.DragEndEvent) => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: fit-content;
+  height: 10vh;
   gap: 12px;
   background-color: white;
   padding: 8px;
+  width: 100%;
 }
 
 .button-add-layer {
-  height: 50px;
+  height: 100%;
 }
 </style>
