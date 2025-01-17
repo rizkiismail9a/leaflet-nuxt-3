@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { Feature, Polygon, Position } from "geojson";
+import { area } from "@turf/area";
+
 type LayerMapItem = L.LatLngExpression[][];
 
 const { $leaflet } = useNuxtApp();
@@ -8,6 +11,7 @@ const myLayerMap = reactive<LayerMapItem>([]);
 const oldPointPosition = ref();
 const polygonKey = ref<number>(0);
 const activeLayer = ref<number>(0);
+const myArea = ref<number>(0);
 
 // const markers = reactive<L.Marker[][]>([]);
 
@@ -23,6 +27,21 @@ const onClickMap = (e: L.LeafletMouseEvent) => {
     ...myLayerMap[activeLayer.value],
     newCoordinates,
   ];
+
+  if (myLayerMap[activeLayer.value].length > 2) {
+    const newPolygon: Feature<Polygon> = {
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [...myLayerMap[activeLayer.value], myLayerMap[activeLayer.value][0]],
+        ] as Position[][],
+      },
+      properties: {},
+    };
+
+    myArea.value = area(newPolygon);
+  }
 };
 
 const addLayer = () => {
@@ -101,7 +120,11 @@ const onDragEnd = (event: L.DragEndEvent) => {
       :center="[-6.81789079877179, 107.1339085287504]"
       @click="onClickMap"
       :max-zoom="20"
-      :options="{ attributionControl: false, zoomSnap: 0.5 }"
+      :options="{
+        attributionControl: false,
+        zoomSnap: 0.5,
+        zoomControl: false,
+      }"
     >
       <LTileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -111,7 +134,7 @@ const onDragEnd = (event: L.DragEndEvent) => {
         :maxZoom="25"
       ></LTileLayer>
 
-      <LControlAttribution position="topright" prefix="LindungiHutan" />
+      <LControlAttribution position="topleft" prefix="LindungiHutan" />
 
       <LPolygon
         :key="polygonKey"
@@ -157,6 +180,7 @@ const onDragEnd = (event: L.DragEndEvent) => {
       </LControl> -->
     </LMap>
     <div class="actionButton">
+      <p>{{ myArea / 1e6 }} km2</p>
       <button @click.stop="addLayer" class="button-add-layer">
         Tambah Layer
       </button>
@@ -184,7 +208,7 @@ const onDragEnd = (event: L.DragEndEvent) => {
 }
 
 /* Untuk menghapus garis-garis antar tile */
-::v-deep .leaflet-container img.leaflet-tile {
+:deep(.leaflet-container img.leaflet-tile) {
   /* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
   mix-blend-mode: normal;
 }
