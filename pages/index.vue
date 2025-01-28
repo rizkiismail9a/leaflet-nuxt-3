@@ -73,7 +73,7 @@ const onDragStart = (e: L.DragEndEvent) => {
   const oldLatLng = e.target.getLatLng();
 
   oldPointPosition.value = [oldLatLng.lat, oldLatLng.lng];
-  console.log("titik lama", oldPointPosition.value);
+  // console.log("titik lama", oldPointPosition.value);
 };
 
 const onDragEnd = (event: L.DragEndEvent) => {
@@ -119,19 +119,21 @@ const onDragEnd = (event: L.DragEndEvent) => {
       :zoom="18"
       :center="[-6.81789079877179, 107.1339085287504]"
       @click="onClickMap"
-      :max-zoom="20"
       :options="{
         attributionControl: false,
         zoomSnap: 0.5,
-        zoomControl: false,
+        maxZoom: 22,
+        // zoomControl: false,
       }"
     >
       <LTileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         layer-type="base"
         name="OpenStreetMap"
-        :maxNativeZoom="19"
-        :maxZoom="25"
+        :options="{
+          maxNativeZoom: 19, // OSM max available zoom is at 19.
+          maxZoom: 22,
+        }"
       ></LTileLayer>
 
       <LControlAttribution position="topleft" prefix="LindungiHutan" />
