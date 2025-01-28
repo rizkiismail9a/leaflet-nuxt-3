@@ -123,7 +123,7 @@ const onDragEnd = (event: L.DragEndEvent) => {
         attributionControl: false,
         zoomSnap: 0.5,
         maxZoom: 22,
-        // zoomControl: false,
+        zoomControl: false,
       }"
     >
       <LTileLayer
