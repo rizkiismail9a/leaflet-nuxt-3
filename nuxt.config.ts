@@ -4,7 +4,13 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   plugins: [
     { src: "~/plugins/leaflet.client.ts", mode: "client" }, // Muat hanya di client
+    // { src: "~/plugins/openLayers.client.ts", mode: "client" }, // Muat hanya di client
   ],
+  routeRules: {
+    "/demo-open-layer": {
+      ssr: false,
+    },
+  },
   devServer: {
     port: 8090,
   },
