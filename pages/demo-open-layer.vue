@@ -8,7 +8,7 @@ definePageMeta({
   ssr: false,
 });
 
-const center = ref([34, 39.13]);
+const center = ref([35.279026031494084, 36.64069366455101]);
 const projection = ref("EPSG:4326");
 const zoom = ref(6);
 const rotation = ref(0);
@@ -114,6 +114,7 @@ const drawstart = (event) => {
 };
 
 const drawend = (event) => {
+  // Saat draw, hasil draw itu harus diubah jadi geojson, harus ada property name, barulah di @select di ol-interactions-select bisa nangkap, bisa di-filter
   console.log(event);
 };
 
@@ -130,11 +131,11 @@ const videoStopped = (event) => {
 };
 
 const swipeControl = ref(null);
-// const jawgLayer = ref(null);
+const jawgLayer = ref(null);
 const osmLayer = ref(null);
 const layerList = ref([]);
 onMounted(() => {
-  // layerList.value.push(jawgLayer.value.tileLayer);
+  layerList.value.push(jawgLayer.value.tileLayer);
   layerList.value.push(osmLayer.value.tileLayer);
   console.log(layerList.value);
 });
@@ -182,11 +183,11 @@ const zones = [
       :projection="projection"
     />
 
-    <!-- <ol-swipe-control
+    <ol-swipe-control
       ref="swipeControl"
       v-if="layerList.length > 0"
       :layerList="layerList"
-    /> -->
+    />
 
     <ol-layerswitcherimage-control />
 
@@ -201,13 +202,13 @@ const zones = [
     <ol-tile-layer ref="osmLayer" title="OSM">
       <ol-source-osm />
     </ol-tile-layer>
-    <!-- 
+
     <ol-tile-layer ref="jawgLayer" title="JAWG">
       <ol-source-xyz
         crossOrigin="anonymous"
         url="https://c.tile.jawg.io/jawg-dark/{z}/{x}/{y}.png?access-token=87PWIbRaZAGNmYDjlYsLkeTVJpQeCfl2Y61mcHopxXqSdxXExoTLEv7dwqBwSWuJ"
       />
-    </ol-tile-layer> -->
+    </ol-tile-layer>
 
     <!-- Ini control bar yang ada di atas -->
     <ol-control-bar>
@@ -346,8 +347,8 @@ const zones = [
       </ol-source-vector>
     </ol-vector-layer> -->
 
-    <!-- Ini cluster, buat yang mirip -->
-    <!-- <ol-animated-clusterlayer
+    <!-- Ini cluster, buat yang mirip radioaktif-->
+    <ol-animated-clusterlayer
       :animationDuration="500"
       :distance="40"
       title="CLUSTER"
@@ -379,7 +380,7 @@ const zones = [
           <ol-style-fill color="white"></ol-style-fill>
         </ol-style-text>
       </ol-style>
-    </ol-animated-clusterlayer> -->
+    </ol-animated-clusterlayer>
 
     <ol-overlay
       :position="selectedCityPosition"
