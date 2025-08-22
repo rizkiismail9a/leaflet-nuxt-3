@@ -3,6 +3,9 @@
   <div>
     <nuxt-link to="/use-leaflet"><button>Use Leaflet</button></nuxt-link>
     <nuxt-link to="/use-open-layers"><button>Use OpenLayers</button></nuxt-link>
+    <nuxt-link to="/demo-open-layer">
+      <button>Fitur yang posibel dibuat</button>
+    </nuxt-link>
   </div>
 </template>
 
