@@ -135,7 +135,7 @@ const jawgLayer = ref(null);
 const osmLayer = ref(null);
 const layerList = ref([]);
 onMounted(() => {
-  layerList.value.push(jawgLayer.value.tileLayer);
+  // layerList.value.push(jawgLayer.value.tileLayer);
   layerList.value.push(osmLayer.value.tileLayer);
   console.log(layerList.value);
 });
@@ -183,32 +183,32 @@ const zones = [
       :projection="projection"
     />
 
-    <ol-swipe-control
+    <!-- <ol-swipe-control
       ref="swipeControl"
       v-if="layerList.length > 0"
       :layerList="layerList"
-    />
+    /> -->
 
     <ol-layerswitcherimage-control />
 
-    <ol-zone-control
+    <!-- <ol-zone-control
       :zones="zones"
       :projection="projection"
       :layer="jawgLayer.tileLayer"
       v-if="jawgLayer != null"
     >
-    </ol-zone-control>
+    </ol-zone-control> -->
 
     <ol-tile-layer ref="osmLayer" title="OSM">
       <ol-source-osm />
     </ol-tile-layer>
 
-    <ol-tile-layer ref="jawgLayer" title="JAWG">
+    <!-- <ol-tile-layer ref="jawgLayer" title="JAWG">
       <ol-source-xyz
         crossOrigin="anonymous"
         url="https://c.tile.jawg.io/jawg-dark/{z}/{x}/{y}.png?access-token=87PWIbRaZAGNmYDjlYsLkeTVJpQeCfl2Y61mcHopxXqSdxXExoTLEv7dwqBwSWuJ"
       />
-    </ol-tile-layer>
+    </ol-tile-layer> -->
 
     <!-- Ini control bar yang ada di atas -->
     <ol-control-bar>
@@ -240,6 +240,7 @@ const zones = [
       <ol-printdialog-control />
     </ol-control-bar>
 
+    <!-- Ini untuk menampilkan koordinat mouse -->
     <ol-mouseposition-control />
     <ol-fullscreen-control />
     <ol-overviewmap-control>
@@ -249,7 +250,7 @@ const zones = [
     </ol-overviewmap-control>
 
     <ol-scaleline-control />
-    <!-- <ol-rotate-control /> -->
+    <ol-rotate-control />
     <ol-zoom-control />
     <!-- <ol-zoomslider-control /> -->
     <ol-zoomtoextent-control

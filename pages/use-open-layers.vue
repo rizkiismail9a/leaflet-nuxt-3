@@ -22,6 +22,7 @@ const currentResolution = ref(0);
 const layerList = ref([]);
 const osmLayer = ref(null);
 const jawgLayer = ref(null);
+const googleLayer = ref(null);
 const drawEnable = ref(false);
 const modifyEnabled = ref(false);
 const drawType = ref("Point");
@@ -33,11 +34,11 @@ const vectorSource = ref();
 let geoJson;
 
 onMounted(() => {
-  //   layerList.value.push(jawgLayer.value.tileLayer);
-  //   if (osmLayer.value) {
-  //     osmLayer.value.push(osmLayer.value.tileLayer);
-  //   }
-  console.log(layerList.value);
+  if (osmLayer.value) {
+    // layerList.value.push(osmLayer.value.tileLayer);
+  }
+  layerList.value.push(googleLayer.value.tileLayer);
+  console.log("Ini layer list", layerList.value);
   //   selectConditions.value = inject("ol-selectconditions");
   //   selectCondition.value = selectConditions.value.click;
   geoJson = new format.GeoJSON();
@@ -119,8 +120,12 @@ const selectInteactionFilter = (feature) => {
       @change:rotation="rotationChanged"
     />
 
-    <ol-tile-layer>
+    <!-- <ol-tile-layer title="OSM">
       <ol-source-osm />
+    </ol-tile-layer> -->
+
+    <ol-tile-layer ref="googleLayer" title="google">
+      <ol-source-xyz url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}" />
     </ol-tile-layer>
 
     <!-- Ini peta layer warna gelap -->
@@ -132,6 +137,7 @@ const selectInteactionFilter = (feature) => {
     </ol-tile-layer> -->
 
     <!-- Harus di luar ol-vector-layer -->
+    <!-- Ini gunanya adalah ketika ada bagian polygon yang diklik, bakal ada event yang di-log -->
     <ol-interaction-select
       v-if="!drawEnable"
       @select="featureSelected"
@@ -143,6 +149,7 @@ const selectInteactionFilter = (feature) => {
       </ol-style>
     </ol-interaction-select>
 
+    <!-- Ini untuk hasil gambar polygon -->
     <ol-vector-layer>
       <ol-source-vector
         :format="geoJson"
@@ -233,5 +240,15 @@ const selectInteactionFilter = (feature) => {
   to {
     transform: rotate(360deg);
   }
+}
+
+ul {
+  position: absolute;
+  background-color: aqua;
+  padding: 12px;
+  z-index: 10;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 </style>
