@@ -12,6 +12,7 @@ const center = ref([35.279026031494084, 36.64069366455101]);
 const projection = ref("EPSG:4326");
 const zoom = ref(6);
 const rotation = ref(0);
+const usedMap = ref("https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}");
 
 const format = inject("ol-format");
 
@@ -35,6 +36,17 @@ const view = ref(null);
 
 const drawEnable = ref(false);
 const drawType = ref("Point");
+
+/**
+ * Ubah peta dari OSM atau Google
+ */
+const changeMapLayer = (type) => {
+  if (type === "OSM") {
+    usedMap.value = "https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+  } else {
+    usedMap.value = "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}";
+  }
+};
 
 const changeDrawType = (active, draw) => {
   drawEnable.value = active;
@@ -134,11 +146,11 @@ const swipeControl = ref(null);
 const jawgLayer = ref(null);
 const osmLayer = ref(null);
 const layerList = ref([]);
-onMounted(() => {
-  // layerList.value.push(jawgLayer.value.tileLayer);
-  layerList.value.push(osmLayer.value.tileLayer);
-  console.log(layerList.value);
-});
+// onMounted(() => {
+//   // layerList.value.push(jawgLayer.value.tileLayer);
+//   layerList.value.push(osmLayer.value.tileLayer);
+//   console.log(layerList.value);
+// });
 
 const path = ref([
   [25.6064453125, 44.73302734375001],
@@ -169,6 +181,9 @@ const zones = [
 </script>
 
 <template>
+  <button @click="changeMapLayer('OSM')">Gunakan OSM Map</button>
+  <button @click="changeMapLayer('Google')">Gunakan Google Map</button>
+
   <ol-map
     ref="map"
     :loadTilesWhileAnimating="true"
@@ -189,7 +204,7 @@ const zones = [
       :layerList="layerList"
     /> -->
 
-    <ol-layerswitcherimage-control />
+    <!-- <ol-layerswitcherimage-control /> -->
 
     <!-- <ol-zone-control
       :zones="zones"
@@ -198,9 +213,15 @@ const zones = [
       v-if="jawgLayer != null"
     >
     </ol-zone-control> -->
-
+    <!-- 
     <ol-tile-layer ref="osmLayer" title="OSM">
       <ol-source-osm />
+    </ol-tile-layer> -->
+
+    <!-- Title itu untuk judul di componen ol-layerswitchimage-control -->
+
+    <ol-tile-layer>
+      <ol-source-xyz :url="usedMap" />
     </ol-tile-layer>
 
     <!-- <ol-tile-layer ref="jawgLayer" title="JAWG">
@@ -282,6 +303,7 @@ const zones = [
       </ol-style>
     </ol-interaction-select>
 
+    <!-- Preview itu buat placholder, ada preview area-nya -->
     <ol-vector-layer
       title="AIRPORTS"
       preview="https://raw.githubusercontent.com/MelihAltintas/vue3-openlayers/main/src/assets/tr.png"
